@@ -1,6 +1,7 @@
 Ball.MainMenu = function(game) {};
 Ball.MainMenu.prototype = {
 	create: function() {
+		this.add.sprite(0, 0, 'screen-bg');
 		this.add.sprite(0, 0, 'screen-mainmenu');
 		this.gameTitle = this.add.sprite(Ball._WIDTH*0.5, 40, 'title');
 		this.gameTitle.anchor.set(0.5,0);

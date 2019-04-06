@@ -7,7 +7,6 @@ Ball.Game.prototype = {
 		this.fontSmall = { font: "16px Arial", fill: "#e4beef" };
 		this.fontBig = { font: "24px Arial", fill: "#e4beef" };
 		this.fontMessage = { font: "24px Arial", fill: "#e4beef",  align: "center", stroke: "#320C3E", strokeThickness: 4 };
-		this.audioStatus = true;
 		this.timer = 0;
 		this.totalTimer = 0;
 		this.level = 1;
@@ -15,12 +14,6 @@ Ball.Game.prototype = {
 		this.movementForce = 50;
 		this.ballStartPos = { x: Ball._WIDTH*0.5, y: 450 };
 
-		this.audioButton = this.add.button(Ball._WIDTH-8*2, 8, 'button-audio', this.manageAudio, this);
-		this.audioButton.anchor.set(1,0);
-		this.audioButton.input.useHandCursor = true;
-		this.audioButton.animations.add('true', [0], 10, true);
-		this.audioButton.animations.add('false', [1], 10, true);
-		this.audioButton.animations.play(this.audioStatus);
 		this.timerText = this.game.add.text(15, 15, "Time: "+this.timer, this.fontBig);
 		this.levelText = this.game.add.text(120, 10, "Level: "+this.level+" / "+this.maxLevels, this.fontSmall);
 		this.totalTimeText = this.game.add.text(120, 30, "Total time: "+this.totalTimer, this.fontSmall);
@@ -34,7 +27,7 @@ Ball.Game.prototype = {
 		this.ball.anchor.set(0.5);
 		this.physics.enable(this.ball, Phaser.Physics.ARCADE);
 		this.ball.body.setSize(18, 18);
-		this.ball.body.bounce.set(0.3, 0.3);
+		this.ball.body.bounce.set(0.5, 0.5);
 
 		this.initLevels();
 		this.showLevel(1);
@@ -53,13 +46,12 @@ Ball.Game.prototype = {
 		this.borderGroup.create(0, 0, 'border-vertical');
 		this.borderGroup.create(Ball._WIDTH-2, 0, 'border-vertical');
 		this.borderGroup.setAll('body.immovable', true);
-		this.bounceSound = this.game.add.audio('audio-bounce');
 	},
 	initLevels: function() {
 		this.levels = [];
 		this.levelData = [
 			[
-				{ x: 96, y: 224, t: 'w' }
+				{ x: 96, y: 224, t: 'w' },
 			],
 			[
 				{ x: 72, y: 320, t: 'w' },
@@ -116,10 +108,6 @@ Ball.Game.prototype = {
 		this.timerText.setText("Time: "+this.timer);
 		this.totalTimeText.setText("Total time: "+(this.totalTimer+this.timer));
 	},
-	manageAudio: function() {
-		this.audioStatus =! this.audioStatus;
-		this.audioButton.animations.play(this.audioStatus);
-	},
 	update: function() {
 		if(this.keys.left.isDown) {
 			this.ball.body.velocity.x -= this.movementForce;
@@ -138,9 +126,6 @@ Ball.Game.prototype = {
 		this.physics.arcade.overlap(this.ball, this.hole, this.finishLevel, null, this);
 	},
 	wallCollision: function() {
-		if(this.audioStatus) {
-			this.bounceSound.play();
-		}
 		// Vibration API
 		if("vibrate" in window.navigator) {
 			window.navigator.vibrate(100);
